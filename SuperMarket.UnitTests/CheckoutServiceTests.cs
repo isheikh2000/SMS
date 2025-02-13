@@ -73,4 +73,39 @@ public class CheckoutServiceTests
         //Assert
         Assert.AreEqual(55, result);
     }
+
+    [Test]
+    public void Scan_MultipleItems1_ReturnSpecialPrice()
+    {
+        //Arrange
+        var checkoutService = new CheckoutService(_priceRepository);
+
+        //Act
+        checkoutService.Scan("A");
+        checkoutService.Scan("A");
+        checkoutService.Scan("A");
+        var result = checkoutService.GetTotalPrice();
+
+        //Assert
+        Assert.AreEqual(130, result);
+    }
+
+    [Test]
+    public void Scan_MultipleItems2_ReturnSpecialPrice()
+    {
+        //Arrange
+        var checkoutService = new CheckoutService(_priceRepository);
+
+        //Act
+        checkoutService.Scan("B");
+        checkoutService.Scan("B");        
+        var result = checkoutService.GetTotalPrice();
+
+        //Assert
+        Assert.AreEqual(45, result);
+    }
+
+
+
+
 }
