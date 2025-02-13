@@ -15,7 +15,7 @@ public class CheckoutServiceTests
     }
 
     [Test]
-    public void Scan_SingleItem_ReturnRegularPrice()
+    public void Scan_SingleItem1_ReturnRegularPrice()
     {
         //Arrange
         var checkoutService = new CheckoutService(_priceRepository);
@@ -26,5 +26,19 @@ public class CheckoutServiceTests
 
         //Assert
         Assert.AreEqual(50, result);
+    }
+
+    [Test]
+    public void Scan_SingleItem2_ReturnRegularPrice()
+    {
+        //Arrange
+        var checkoutService = new CheckoutService(_priceRepository);
+
+        //Act
+        checkoutService.Scan("D");
+        var result = checkoutService.GetTotalPrice();
+
+        //Assert
+        Assert.AreEqual(15, result);
     }
 }
