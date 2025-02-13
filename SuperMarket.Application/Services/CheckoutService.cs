@@ -42,7 +42,7 @@ namespace SuperMarket.Application.Services
                 }
                 else
                 {
-                    totalPrice = (item.Value * price.UnitPrice);
+                    totalPrice += (item.Value * price.UnitPrice);
                 }
             }           
             
