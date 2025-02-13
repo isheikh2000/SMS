@@ -16,3 +16,8 @@ interface ICheckout
     void Scan(string item);
     int GetTotalPrice();
 }
+
+
+**System Architecture Layout:**
+
+![image](https://github.com/user-attachments/assets/c2a19a18-e7b0-4b47-9539-554c55338d6d)
