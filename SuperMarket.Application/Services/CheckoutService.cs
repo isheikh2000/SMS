@@ -1,22 +1,34 @@
 ﻿using SuperMarket.Domain.Entities;
+using SuperMarket.Domain.Exceptions;
 using SuperMarket.Domain.Interfaces;
+using SuperMarket.Domain.Rules;
+
 
 namespace SuperMarket.Application.Services
 {
     public class CheckoutService : ICheckout
     {
-        private IProductPriceRepository _priceRepository;
+        private IProductRepository _priceRepository;
+
+        private IPricingStrategyFactory _factory;
         
         private Dictionary<string,int> _scanItems;
 
-        public CheckoutService(IProductPriceRepository priceRepository)
+        public CheckoutService(IProductRepository priceRepository, IPricingStrategyFactory factory)
         {
             _priceRepository = priceRepository;
+
+            _factory = factory;
 
             _scanItems = new Dictionary<string,int>();         
         }
         public void Scan(string item)
         {
+            var validItem = _priceRepository.GetProductPrice(item);
+
+            if (validItem == null)
+                throw new InvalidProductException(item);
+
             if (_scanItems.ContainsKey(item))
             {
                 _scanItems[item]++;
@@ -33,26 +45,15 @@ namespace SuperMarket.Application.Services
             
             foreach (var item in _scanItems)
             {
-                var price = _priceRepository.GetProductPrice(item.Key);
+                var productPrice = _priceRepository.GetProductPrice(item.Key);
 
-                if (IsSpecialPrice(price))
-                {
-                    totalPrice += (item.Value / price.SpecialPriceQuantity) * price.SpecialPrice;
-                    totalPrice += (item.Value % price.SpecialPriceQuantity) * price.UnitPrice;
-                }
-                else
-                {
-                    totalPrice += (item.Value * price.UnitPrice);
-                }
+                var strategy = _factory.GetPricingStrategy(productPrice);
+                
+                totalPrice += strategy.GetPrice(item.Value);
+
             }           
             
             return totalPrice;
         }          
-
-        private bool IsSpecialPrice(ProductPrice price)
-        {
-            return price.SpecialPriceQuantity > 0 && price.SpecialPrice > 0;
-        }
-
     }
 }
