@@ -21,7 +21,20 @@ public class CheckoutServiceTests
         _factory = new PricingStrategyFactory(); 
     }
 
-   
+    [Test]
+    public void Scan_InvalidItem_ThrowInvalidProductException()
+    {
+        //Arrange
+        var checkoutService = new CheckoutService(_priceRepository, _factory);
+
+        //Act   
+        var exception = Assert.Throws<InvalidProductException>(() => checkoutService.Scan("Z"));
+
+        //Assert
+        Assert.AreEqual("Invalid Product: Z", exception.Message);
+    }
+
+
     [Test]
     public void Scan_ZeroItem_ReturnZeroPrice()
     {
